@@ -21,7 +21,7 @@ Kampus is a tree-sitter based code indexing tool that creates a queryable knowle
 
 ```bash
 # Clone the repository
-git clone https://github.com/yourusername/kampus.git
+git clone https://github.com/nickverneck/kampus.git
 cd kampus
 
 # Build and install using Cargo
