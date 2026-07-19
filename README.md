@@ -74,6 +74,9 @@ kampus find "User*"
 
 # Find only functions in Rust files
 kampus find "process_*" --kind function --language rs
+
+# Show full file paths (no truncation)
+kampus find "*product*" --full-paths
 ```
 
 #### 4. Call Graphs (`calls`)

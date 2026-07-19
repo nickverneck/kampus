@@ -75,21 +75,31 @@ enum Commands {
     },
 
     /// Find symbols by name pattern
+    #[command(
+        about = "Find symbols by name pattern",
+        long_about = "Find symbols by name pattern (case-insensitive). Supports '*' wildcards.\n\nKinds:\n  function, class, struct, interface, method, trait, enum\n\nLanguages:\n  rs, py, ts, js, go, cpp\n\nExamples:\n  kampus find \"User*\"              # names starting with User\n  kampus find \"*product*\"           # names containing product\n  kampus find \"process_*\" --kind function --language rs\n  kampus find \"*product*\" --full-paths --limit 50\n\nTips for LLMs/agents:\n  - Always quote the pattern to prevent shell expansion.\n  - Use --full-paths to avoid truncated file paths.\n  - Use --kind/--language to narrow results and reduce noise.\n"
+    )]
     Find {
         /// Symbol name pattern (supports * wildcards)
         pattern: String,
 
         /// Symbol kind to filter (function, class, struct, interface, method)
-        #[arg(short, long)]
+        /// Valid kinds: function, class, struct, interface, method, trait, enum
+        #[arg(short, long, verbatim_doc_comment)]
         kind: Option<String>,
 
-        /// Language to filter (py, rs, ts, js, go, cpp)
-        #[arg(short, long)]
+        /// Language to filter (rs, py, ts, js, go, cpp)
+        #[arg(short, long, verbatim_doc_comment)]
         language: Option<String>,
 
         /// Maximum number of results
         #[arg(short = 'n', long, default_value = "20")]
         limit: usize,
+
+        /// Show full file paths (no truncation in the table output)
+        /// Useful for agents/LLMs that need to copy exact paths.
+        #[arg(long, verbatim_doc_comment)]
+        full_paths: bool,
     },
 
     /// Show the call graph for a function
@@ -170,12 +180,14 @@ async fn main() -> anyhow::Result<()> {
             kind,
             language,
             limit,
+            full_paths,
         } => {
             commands::find::run(
                 &pattern,
                 kind.as_deref(),
                 language.as_deref(),
                 limit,
+                full_paths,
                 cli.db_uri.as_deref(),
                 &cli.graph,
             )

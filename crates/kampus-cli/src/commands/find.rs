@@ -7,6 +7,7 @@ pub async fn run(
     kind: Option<&str>,
     language: Option<&str>,
     limit: usize,
+    full_paths: bool,
     db_uri: Option<&str>,
     graph_name: &str,
 ) -> anyhow::Result<()> {
@@ -82,12 +83,22 @@ pub async fn run(
         let kind = extract_string(&row.get(1));
         let file = extract_string(&row.get(2));
         let line = extract_i64(&row.get(3));
+        let display_name = if full_paths {
+            name.clone()
+        } else {
+            truncate(&name, 30)
+        };
+        let display_file = if full_paths {
+            file.clone()
+        } else {
+            truncate(&file, 40)
+        };
 
         println!(
             "{:<30} {:<12} {:<40} {:<6}",
-            truncate(&name, 30),
+            display_name,
             kind,
-            truncate(&file, 40),
+            display_file,
             line
         );
     }
